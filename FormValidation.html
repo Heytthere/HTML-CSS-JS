@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form validation</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #059669;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background: var(--background);
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            color: var(--text);
+            line-height: 1.5;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        form {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        #center {
+            font-size: 2.25rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.025em;
+        }
+
+        fieldset {
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(to bottom, var(--surface), rgba(255, 255, 255, 0.8));
+        }
+
+        .legend {
+            color: var(--primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 0 1rem;
+        }
+
+        .input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .input, select, textarea {
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+            width: calc(100% - 2rem);
+        }
+
+        .gender-group {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .gender-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .gender-option input[type="radio"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .font, .font1, .font2, .font3 {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .button, .reset {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.75rem;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .button:hover, .reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .reset {
+            background: linear-gradient(135deg, var(--secondary) 0%, #475569 100%);
+        }
+
+        #progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 999px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, #34d399 100%);
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
+        #password-requirements {
+            background: rgba(241, 245, 249, 0.5);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(8px);
+        }
+
+        #password-requirements ul {
+            list-style: none;
+            padding-left: 1rem;
+            margin: 0.75rem 0;
+        }
+
+        #password-requirements li {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text);
+        }
+
+        #password-requirements li::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            form { padding: 1.5rem; margin: 1rem; }
+            fieldset { padding: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <form action="#">
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+        <center id="center">
+            <caption>
+                <u>Registration Form Validation</u>
+            </caption>
+        </center><br><br>
+        <fieldset>
+            <legend class="legend">Personal Details:</legend>
+            <font class="font">Enter Your Full Name:&nbsp;&nbsp;</font><input class="input" type="text" id="fname">&nbsp;&nbsp;<label id="name" color="white"></label><br><br>
+            <font class="font">Mother Name:&nbsp;&nbsp;</font><input class="input" type="text" id="mname">&nbsp;&nbsp;
+            <label id="m_name"></label><br><br>
+            <font class="font">Date of Birth:&nbsp;&nbsp;</font><input class="input" type="date" placeholder="dd-mm-yyyy" id="dob">&nbsp;&nbsp;
+            <label id="date"></label><br><br>
+            <font class="font">Age:&nbsp;&nbsp;</font><input class="input" type="number" id="age">&nbsp;&nbsp;
+            <label id="Age"></label><br><br>
+            <div class="gender-group">
+                <font class="font">Gender:&nbsp;&nbsp;</font>
+                <label class="gender-option">
+                    <input type="radio" name="gender" id="male" value="Male">
+                    <span>Male</span>
+                </label>
+                <label class="gender-option">
+                    <input type="radio" name="gender" id="female" value="Female">
+                    <span>Female</span>
+                </label>
+                <label id="gen"></label>
+            </div><br>
+            <font class="font">Address:&nbsp;&nbsp;</font><textarea class="input" rows="6" cols="20" name="address" id="address"></textarea>&nbsp;&nbsp;
+            <label id="addr"></label><br><br>
+            <font class="font">State:&nbsp;</font><select class="input" name="state" id="state">
+                    <option value="--Please select--">--Please select--</option>
+                    <option value="Arunachal pradesh">Arunachal Pradesh</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Kolkatta">Kolkatta</option>
+                    <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Punjab">Punjab</option>       
+                </select>&emsp;
+                <label id="state_1"></label><br>
+        </fieldset><br>
+        <fieldset>
+            <legend class="legend">Conact Details:</legend>
+            <font class="font1"> Enter Mobile Number:&nbsp;&nbsp;</font><input class="input" type="number" id="mobile">&nbsp;&nbsp;
+            <label id="mob"></label><br><br>
+            <font class="font1">Enter E-mail id:&nbsp;&nbsp;</font><input class="input" type="text" id="email">&nbsp;&nbsp;
+            <label id="mail"></label><br><br>
+        </fieldset><br>
+        <fieldset>
+            <legend class="legend">Qualification Details:</legend>
+            <font class="font2">Previous Class:&nbsp;&nbsp;</font><select class="input" name="p_class" id="p_class">
+                <option value="--Please select--">--Please select--</option>
+                <option value="10th">10th</option>
+                <option value="12th">12th</option>
+                <option value="F.Y College">F.Y College</option>
+                <option value="S.Y College">S.Y college</option>
+                <option value="T.Y College">T.Y College</option>
+            </select>&emsp;
+            <label id="pre_class"></label><br><br>
+            <font class="font2">Select Medium:&nbsp;&nbsp;</font><select class="input" name="medium" id="medium">
+                <option value="--Please select--">--Please select--</option>
+                <option value="English">English</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Gujarati">Gujarati</option>
+                <option value="Marthi">Marthi</option>
+            </select>&emsp;
+            <label id="s_m"></label><br><br>
+            <font class="font2">Select Stream:&emsp;</font><select class="input" name="stream" id="stream">
+                <option value="--Please select--">--Please select--</option>
+                <option value="General">General</option>
+                <option value="Arts">Arts</option>
+                <option value="Commerce">Commerce</option>
+                <option value="Science">Science</option>
+                <option value="Diploma">Diploma</option>
+            </select>&emsp;
+            <label id="s_str"></label><br><br>
+            <font class="font2">Select Board:&emsp;</font><select class="input" name="s_board" id="s_board">
+                <option value="--Please select--">--Please select--</option>
+                <option value="GSEB">GSEB</option>
+                <option value="CBSE">CBSE</option>
+            </select>&emsp;
+            <label id="board"></label><br><br>
+            <font class="font2">Seat Number:&emsp;</font><input class="input" type="text" id="seat">&emsp;
+            <label id="se_num"></label><br><br>
+            <font class="font2">Passing Year:&emsp;</font><input class="input" type="number" id="pass">&emsp;
+            <label id="p_year"></label><br><br>
+            <font class="font2">Percentage:&emsp;</font><input class="input" type="number" id="per">&emsp;
+            <label id="p_t"></label><br><br>
+        </fieldset><br>
+        <fieldset>
+            <legend class="legend">Password Verificaton:</legend>
+            <font class="font3">Enter Your Password for Login:&emsp;</font>
+            <input class="input" type="password" id="password" onkeyup="checkPasswordStrength(this.value)">&emsp;
+            <div id="password-strength-meter"></div>
+            <div id="password-requirements">
+                Password must contain:
+                <ul>
+                    <li id="length">At least 8 characters</li>
+                    <li id="uppercase">Uppercase letter</li>
+                    <li id="lowercase">Lowercase letter</li>
+                    <li id="number">Number</li>
+                    <li id="special">Special character</li>
+                </ul>
+            </div>
+            <label id="p_d"></label><br>
+        </fieldset><br>
+        <fieldset>
+            <legend class="legend">Image Upload:</legend>
+            <font class="font3">Upload Your Image:&emsp;</font><input type="file" id="file" onchange="return filevalidation()"/>
+        </fieldset><br><br>
+        <center>
+            <input class="button" type="submit" name="okk" value="Submit" onclick="Submit()">&nbsp;&nbsp;
+            <input class="reset" type="reset" name="reset" value="Reset"><br>
+            <label id="n"></label>
+
+        </center>
+    </form>
+
+    <script>
+        function validateForm() {
+            const errors = [];
+            const requiredFields = ['fname', 'mname', 'dob', 'age', 'address', 'mobile', 'email'];
+
+            requiredFields.forEach(field => {
+                const value = document.getElementById(field)?.value;
+                if (!value) {
+                    errors.push(`${field} is required`);
+                }
+            });
+
+            return errors;
+        }
+
+        function checkPasswordStrength(password) {
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[^A-Za-z0-9]/.test(password)
+            };
+
+            Object.keys(requirements).forEach(req => {
+                document.getElementById(req).style.color = requirements[req] ? 'green' : 'red';
+            });
+
+            const strength = Object.values(requirements).filter(Boolean).length;
+            const meter = document.getElementById('password-strength-meter');
+            meter.innerHTML = '🔒'.repeat(strength);
+        }
+
+        function updateProgress() {
+            const totalFields = document.querySelectorAll('input, select, textarea').length;
+            const filledFields = document.querySelectorAll('input:not([type="submit"]):not([type="reset"]):filled, select:not([value=""]), textarea:not(:empty)').length;
+            const progress = (filledFields / totalFields) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function filevalidation() {
+            const fileinput = document.getElementById("file");
+            const filepath = fileinput.value;
+            const fileextensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+            if (!fileextensions.exec(filepath)) {
+                alert("Invalid file Type...");
+                fileinput.value = '';
+                return false;
+            }
+        }
+
+        // Set up form tracking
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                element.addEventListener('change', updateProgress);
+            });
+        });
+
+        function Submit() {
+            const errors = validateForm();
+            if (errors.length > 0) {
+                alert(errors.join('\n'));
+                return false;
+            }
+            // Rest of your existing Submit function code
+            var details=[];
+                var f_name=document.getElementById("fname").value;
+                if (f_name!=""){
+                    details.push(f_name);
+                }
+                else{
+                    document.getElementById("name").style.color="white";
+                    document.getElementById("name").innerHTML="*Please enter valid name..";
+                }
+                var mother_name=document.getElementById("mname").value;
+                if (mother_name!=""){
+                    details.push(mother_name);
+                }
+                else{
+                    document.getElementById("m_name").style.color="white";
+                    document.getElementById("m_name").innerHTML="*Please enter mother name..";
+                }
+                var birth_date=document.getElementById("dob").value;
+                if (birth_date!=0){
+                    details.push(birth_date);
+                }
+                else{
+                    document.getElementById("date").style.color="white";
+                    document.getElementById("date").innerHTML="*Please enter date of birth..";
+                }
+                var year=document.getElementById("age").value;
+                if (year!=0){
+                    details.push(year);
+                }
+                else{
+                    document.getElementById("Age").style.color="white";
+                    document.getElementById("Age").innerHTML="*Please enter valid Age..";
+                }
+                var gender="";
+                if (document.getElementById("male").checked){
+                    gender="Male";
+                }
+                if(document.getElementById("female").checked){
+                    gender="Female";
+                }
+                if (gender.length>1){
+                    details.push(gender);
+                }
+                else{
+                    document.getElementById("gen").style.color="white";
+                    document.getElementById("gen").innerHTML="*Please Select Gender..";
+                }
+                var add=document.getElementById("address").value;
+                if (add!=""){
+                    details.push(add);
+                }   
+                else{
+                    document.getElementById("addr").style.color="white";
+                    document.getElementById("addr").innerHTML="*Please enter your address..";
+                }
+                //For state selection..
+                var s=document.getElementById("state");
+                var state=s.options[s.selectedIndex].text;
+                if (s.selectedIndex!=0){
+                    details.push(state);
+                }
+                else{
+                    document.getElementById("state_1").style.color="white";
+                    document.getElementById("state_1").innerHTML="*Please select your state..";
+                }
+
+                var mob_num=document.getElementById("mobile").value;
+                var mob_valid=/^\d{10}$/;
+                if (mob_num.match(mob_valid)){
+                    details.push(mob_num);
+                }
+                else{
+                    document.getElementById("mob").style.color="white";
+                    document.getElementById("mob").innerHTML="*Please enter valid Mobile number..";
+                }
+                var mail_valid= /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/;
+                var email=document.getElementById("email").value;
+                if (email.match(mail_valid)){
+                    details.push(email);
+                }
+                else{
+                    document.getElementById("mail").style.color="white";
+                    document.getElementById("mail").innerHTML="*Please enter valid Email Address..";
+                }
+                //For previous class selection..
+                var pc=document.getElementById("p_class");
+                var preclass=pc.options[pc.selectedIndex].text;
+                if (pc.selectedIndex!=0){
+                    details.push(preclass);
+                }
+                else{
+                    document.getElementById("pre_class").style.color="white";
+                    document.getElementById("pre_class").innerHTML="*Please select your previous class.."
+                }
+
+                //For medium selection..
+                var med=document.getElementById("medium");
+                var s_med=med.options[med.selectedIndex].text;
+                if (med.selectedIndex!=0){
+                    details.push(s_med);
+                }
+                else{
+                    document.getElementById("s_m").style.color="white";
+                    document.getElementById("s_m").innerHTML="*Please select your medium..";
+                }
+
+                //For Stream selection..
+                var stream=document.getElementById("stream");
+                var str=stream.options[stream.selectedIndex].text;
+                if (stream.selectedIndex!=0){
+                    details.push(str);
+                }
+                else{
+                    document.getElementById("s_str").style.color="white";
+                    document.getElementById("s_str").innerHTML="*Please select your stream..";
+                }
+
+                //For board selection..
+                var board=document.getElementById("s_board");
+                var s_b=board.options[board.selectedIndex].text;
+                if (board.selectedIndex!=0){
+                    details.push(s_b);
+                }
+                else{
+                    document.getElementById("board").style.color="white";
+                    document.getElementById("board").innerHTML="*Please select your board.."
+                }
+
+                var seatnum=document.getElementById("seat").value;
+                if (seatnum!=""){
+                    details.push(seatnum);
+                }
+                else{
+                    document.getElementById("se_num").style.color="white";
+                    document.getElementById("se_num").innerHTML="*Please enter valid seat number..";
+                }
+
+                var passyear=document.getElementById("pass").value;
+                if (passyear.length==4){
+                    details.push(passyear);
+                }
+                else{
+                    document.getElementById("p_year").style.color="white";
+                    document.getElementById("p_year").innerHTML="*Please enter valid passing year..";
+                }
+
+                var percentage=document.getElementById("per").value;
+                if (percentage.length!==0){
+                    details.push(percentage);
+                }
+                else{
+                    document.getElementById("p_t").style.color="white";
+                    document.getElementById("p_t").innerHTML="*Please enter your Percentage..";
+                }
+                var passw=/^[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+                var pswd=document.getElementById("password").value;
+                if (pswd.match(passw)){
+                    details.push(pswd);
+                }
+                else{
+                    document.getElementById("p_d").style.color="white";
+                    document.getElementById("p_d").innerHTML="*Please enter valid password.."; 
+                }
+                //for show all details of form..
+                if (details.length!=0){
+                    document.getElementById("n").innerHTML=details;
+                }
+                else{
+                    alert("Please fill all mandatory details of form..");
+
+                }
+        }
+    </script>
+</body>
+</html>
